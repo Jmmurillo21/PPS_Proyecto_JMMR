@@ -6,6 +6,8 @@ from functools import wraps
 import jwt
 import datetime
 
+from validaciones import validar_registro, validar_login
+
 app = Flask(__name__)
 DB_PATH = os.path.join(os.path.dirname(__file__), 'instance', 'pps.db')
 JWT_SECRET = os.environ.get('JWT_SECRET', 'clave-super-secreta-pps-2024-abc123!')
@@ -109,6 +111,11 @@ def register():
 
     if not all([name, email, phone, password]):
         return jsonify({'error': 'Faltan campos'}), 400
+    
+    # VALIDACIÓN 
+    errores = validar_registro(name, email, phone, password)
+    if errores:
+        return jsonify({'error': 'Datos inválidos', 'detalle': errores}), 422
 
     password_hash = generate_password_hash(password, method='pbkdf2:sha256')
 
@@ -135,6 +142,11 @@ def login():
     data     = request.get_json()
     email    = data.get('email', '').strip()
     password = data.get('password')
+
+    # VALIDACIÓN AQUÍ
+    errores = validar_login(email, password)
+    if errores:
+        return jsonify({'error': 'Datos inválidos', 'detalle': errores}), 422
 
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()

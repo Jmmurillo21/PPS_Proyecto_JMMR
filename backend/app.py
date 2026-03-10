@@ -3,12 +3,15 @@ import sqlite3
 import os
 from werkzeug.security import generate_password_hash, check_password_hash
 from functools import wraps
+from flask_cors import CORS
+
 import jwt
 import datetime
 
 from validaciones import validar_registro, validar_login
 
 app = Flask(__name__)
+CORS(app)
 DB_PATH = os.path.join(os.path.dirname(__file__), 'instance', 'pps.db')
 JWT_SECRET = os.environ.get('JWT_SECRET', 'clave-super-secreta-pps-2024-abc123!')
 JWT_ALGORITHM = 'HS256'

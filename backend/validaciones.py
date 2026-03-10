@@ -6,6 +6,8 @@ def validar_registro(name, email, phone, password):
     # ── NAME ──────────────────────────────────────────
     if len(name) <= 2:
         errores.append("El nombre debe tener más de 2 caracteres")
+    if len(name) > 50:
+        errores.append("El nombre no puede tener más de 50 caracteres")
     if not re.match(r"^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$", name):
         errores.append("El nombre solo puede contener letras y espacios")
 
@@ -17,10 +19,14 @@ def validar_registro(name, email, phone, password):
     patron_email = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z]{2,}$"
     if not re.match(patron_email, email):
         errores.append("El email no tiene un formato válido")
+    if len(email) > 100:
+        errores.append("El email no puede tener más de 100 caracteres")
 
     # ── PASSWORD ──────────────────────────────────────
     if len(password) < 8:
         errores.append("La contraseña debe tener al menos 8 caracteres")
+    if len(password) > 128:
+        errores.append("La contraseña no puede tener más de 128 caracteres")
     if not re.search(r"[A-Z]", password):
         errores.append("La contraseña debe tener al menos una mayúscula")
     if not re.search(r"[a-z]", password):
@@ -38,7 +44,12 @@ def validar_login(email, password):
 
     if not email:
         errores.append("El email es requerido")
+    elif len(email) > 100:
+        errores.append("El email no puede tener más de 100 caracteres")
+
     if not password:
         errores.append("La contraseña es requerida")
+    elif len(password) > 128:
+        errores.append("La contraseña no puede tener más de 128 caracteres")
 
     return errores

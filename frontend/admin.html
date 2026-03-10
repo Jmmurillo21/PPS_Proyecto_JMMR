@@ -3,14 +3,75 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Administrador</title>
+<title>Administración</title>
 <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+<body class="bg-gray-100 min-h-screen p-8">
 
-<div class="bg-white p-8 rounded-lg shadow-lg text-center">
-    <h1 class="text-3xl font-bold text-gray-700">Hola, soy ADMIN</h1>
+<div class="max-w-4xl mx-auto bg-white p-6 rounded-lg shadow-lg">
+    <h1 class="text-3xl font-bold mb-6 text-center">Usuarios Registrados</h1>
+
+    <table class="w-full border-collapse">
+        <thead>
+            <tr class="bg-gray-200">
+                <th class="border px-4 py-2">ID</th>
+                <th class="border px-4 py-2">Nombre</th>
+                <th class="border px-4 py-2">Email</th>
+                <th class="border px-4 py-2">Teléfono</th>
+                <th class="border px-4 py-2">Rol</th>
+            </tr>
+        </thead>
+        <tbody id="usuariosBody">
+            <!-- Aquí se insertarán los usuarios -->
+        </tbody>
+    </table>
 </div>
+
+<script>
+async function cargarUsuarios() {
+    const token = localStorage.getItem("token");
+    if(!token){
+        alert("No estás autenticado");
+        window.location.href = "login.html";
+        return;
+    }
+
+    try {
+        const response = await fetch("http://localhost:5001/api/admin/users", {
+            headers: {
+                "Authorization": "Bearer " + token
+            }
+        });
+
+        if(!response.ok){
+            alert("No tienes permisos o el token expiró");
+            window.location.href = "login.html";
+            return;
+        }
+
+        const result = await response.json();
+        const tbody = document.getElementById("usuariosBody");
+
+        result.users.forEach(u => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+                <td class="border px-4 py-2">${u.id}</td>
+                <td class="border px-4 py-2">${u.name}</td>
+                <td class="border px-4 py-2">${u.email}</td>
+                <td class="border px-4 py-2">${u.phone}</td>
+                <td class="border px-4 py-2">${u.role}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+
+    } catch(error){
+        console.error(error);
+        alert("Error al cargar usuarios");
+    }
+}
+
+cargarUsuarios();
+</script>
 
 </body>
 </html>

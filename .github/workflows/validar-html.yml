@@ -1,0 +1,21 @@
+name: Validación HTML
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  html-validation:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout del repositorio
+        uses: actions/checkout@v3
+
+      - name: Validar HTML
+        uses: chrisgavin/html-validator-action@v1
+        with:
+          glob: "**/*.html"
+          fail_on_error: true

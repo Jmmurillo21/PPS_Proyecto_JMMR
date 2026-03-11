@@ -1,24 +1,16 @@
-services:
+version: '3.8'
 
+services:
   backend:
     build: ./backend
-    container_name: pps-backend
+    container_name: backend
     ports:
       - "5001:5001"
-    volumes:
-      - db_data:/app/instance
-    environment:
-      - JWT_SECRET=super_secret_key
-    restart: always
 
   frontend:
     build: ./frontend
-    container_name: pps-frontend
+    container_name: frontend
     ports:
-      - "3000:80"
+      - "8080:80"
     depends_on:
       - backend
-    restart: always
-
-volumes:
-  db_data:

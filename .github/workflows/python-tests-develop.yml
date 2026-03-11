@@ -11,24 +11,20 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1️⃣ Descargar el repositorio
       - name: Checkout del código
         uses: actions/checkout@v3
 
-      # 2️⃣ Configurar Python 3.11
       - name: Configurar Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.11'
 
-      # 3️⃣ Instalar dependencias desde backend/requirements.txt
       - name: Instalar dependencias
         run: |
           python -m pip install --upgrade pip
           pip install -r backend/requirements.txt
           pip install pytest==6.*
 
-      # 4️⃣ Ejecutar todos los tests con pytest
       - name: Ejecutar tests con pytest
         run: |
-          pytest backend --maxfail=1 --disable-warnings -v
+          PYTHONPATH=backend pytest backend --maxfail=1 --disable-warnings -v

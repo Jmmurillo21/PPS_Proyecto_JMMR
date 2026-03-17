@@ -1,11 +1,9 @@
-name: Dependency Security Scan
+name: Security Scan
 
-on:
-  push:
-  pull_request:
+on: [push]
 
 jobs:
-  security-check:
+  scan:
     runs-on: ubuntu-latest
 
     steps:
@@ -18,8 +16,8 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install -r requirements.txt
+          pip install -r backend/requirements.txt
           pip install pip-audit
 
-      - name: Run pip-audit
-        run: pip-audit -r requirements.txt
+      - name: Run vulnerability scan
+        run: pip-audit -r backend/requirements.txt

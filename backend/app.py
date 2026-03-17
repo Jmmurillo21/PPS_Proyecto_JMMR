@@ -8,10 +8,22 @@ from flask_cors import CORS
 import jwt
 import datetime
 
+# 🔥 NUEVO: rate limiting
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
+
 from validaciones import validar_registro, validar_login
 
 app = Flask(__name__)
 CORS(app)
+
+# 🔥 CONFIG RATE LIMIT
+limiter = Limiter(
+    get_remote_address,
+    app=app,
+    default_limits=["200 per day", "50 per hour"]
+)
+
 DB_PATH = os.path.join(os.path.dirname(__file__), 'instance', 'pps.db')
 JWT_SECRET = os.environ.get('JWT_SECRET', 'clave-super-secreta-pps-2024-abc123!')
 JWT_ALGORITHM = 'HS256'
@@ -69,7 +81,6 @@ def decode_token(token: str) -> dict:
     )
 
 def token_required(f):
-    """Decorador: requiere JWT válido en el header Authorization: Bearer <token>"""
     @wraps(f)
     def decorated(*args, **kwargs):
         auth_header = request.headers.get('Authorization', '')
@@ -87,7 +98,6 @@ def token_required(f):
     return decorated
 
 def admin_required(f):
-    """Decorador: requiere JWT válido + rol admin"""
     @wraps(f)
     @token_required
     def decorated(*args, **kwargs):
@@ -104,7 +114,9 @@ def home():
     return jsonify({"message": "PPS Backend OK", "admin": "admin@pps.com / admin123"})
 
 
+# 🔥 RATE LIMIT REGISTER
 @app.route('/api/register', methods=['POST'])
+@limiter.limit("3 per minute")
 def register():
     data = request.get_json()
     name     = data.get('name', '').strip()
@@ -114,8 +126,7 @@ def register():
 
     if not all([name, email, phone, password]):
         return jsonify({'error': 'Faltan campos'}), 400
-    
-    # VALIDACIÓN 
+   
     errores = validar_registro(name, email, phone, password)
     if errores:
         return jsonify({'error': 'Datos inválidos', 'detalle': errores}), 422
@@ -140,13 +151,14 @@ def register():
         return jsonify({'error': 'Email existe'}), 409
 
 
+# 🔥 RATE LIMIT LOGIN (CRÍTICO)
 @app.route('/api/login', methods=['POST'])
+@limiter.limit("5 per minute")
 def login():
     data     = request.get_json()
     email    = data.get('email', '').strip()
     password = data.get('password')
 
-    # VALIDACIÓN AQUÍ
     errores = validar_login(email, password)
     if errores:
         return jsonify({'error': 'Datos inválidos', 'detalle': errores}), 422
@@ -172,14 +184,14 @@ def login():
 @app.route('/api/me', methods=['GET'])
 @token_required
 def me():
-    """Devuelve los datos del usuario autenticado."""
     return jsonify({'current_user': request.current_user}), 200
 
 
+# 🔥 RATE LIMIT ADMIN
 @app.route('/api/admin/users', methods=['GET'])
+@limiter.limit("10 per minute")
 @admin_required
 def list_users():
-    """Lista todos los usuarios (solo admin)."""
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
     cursor.execute("SELECT id, name, email, phone, role FROM users")

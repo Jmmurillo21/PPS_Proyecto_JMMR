@@ -15,7 +15,6 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Validar HTML
-        uses: chrisgavin/html-validator-action@v1
+        uses: Cyb3r-Jak3/html5validator-action@v7
         with:
-          glob: "**/*.html"
-          fail_on_error: true
+          root: .

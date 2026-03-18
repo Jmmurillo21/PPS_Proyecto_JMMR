@@ -114,7 +114,6 @@ Contraseña: admin123
 ## 🔒 OWASP Top 10 - Cobertura de Seguridad
 
 ### **A1: Broken Access Control** ✅
-**Riesgo**: Usuarios pueden acceder a datos o funcionalidades sin autorización
 
 **Cómo se cubre**:
 - ✅ Decorador `@admin_required` que verifica rol antes de ejecutar endpoints administrativos
@@ -139,7 +138,6 @@ def admin_required(f):
 ---
 
 ### **A2: Cryptographic Failures** ✅
-**Riesgo**: Fallo en protección de datos sensibles (contraseñas, tokens)
 
 **Cómo se cubre**:
 - ✅ Hashing de contraseñas con **pbkdf2:sha256** 
@@ -165,7 +163,6 @@ if user and check_password_hash(user[2], password):
 ---
 
 ### **A3: Injection** ✅
-**Riesgo**: Inyección SQL, NoSQL, comando del sistema
 
 **Cómo se cubre**:
 - ✅ **Prepared Statements** con placeholders `?` en todas las consultas SQL
@@ -187,7 +184,6 @@ if not re.match(r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z]{2,}$", email):
 ---
 
 ### **A4: Insecure Design** ✅
-**Riesgo**: Falta de medidas preventivas contra abuso (fuerza bruta, spam)
 
 **Cómo se cubre**:
 - ✅ **Rate Limiting** en endpoints críticos
@@ -211,7 +207,6 @@ def login():
 ---
 
 ### **A5: Security Misconfiguration** ✅
-**Riesgo**: Configuración insegura de servidor, bases de datos, frameworks
 
 **Cómo se cubre**:
 - ✅ Base de datos SQLite en carpeta `instance/` (no en raíz)
@@ -230,7 +225,6 @@ DB_PATH = os.path.join(os.path.dirname(__file__), 'instance', 'pps.db')
 ---
 
 ### **A6: Vulnerable and Outdated Components** ✅
-**Riesgo**: Uso de librerías con vulnerabilidades conocidas
 
 **Cómo se cubre**:
 - ✅ Dependencias actualizadas a versiones estables:
@@ -247,7 +241,6 @@ DB_PATH = os.path.join(os.path.dirname(__file__), 'instance', 'pps.db')
 ---
 
 ### **A7: Authentication and Session Management** ✅
-**Riesgo**: Gestión insegura de sesiones y tokens
 
 **Cómo se cubre**:
 - ✅ JWT con algoritmo seguro (HS256)
@@ -273,7 +266,6 @@ def decode_token(token: str) -> dict:
 ---
 
 ### **A8: Software and Data Integrity Failures** ✅
-**Riesgo**: Falta de validación y verificación de datos
 
 **Cómo se cubre**:
 - ✅ Validación exhaustiva en cada entrada de datos

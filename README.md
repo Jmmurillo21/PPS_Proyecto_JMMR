@@ -432,15 +432,6 @@ def test_sql_injection_login(client):
 
 ---
 
-## 📚 Referencias
-
-- [OWASP Top 10 2021](https://owasp.org/Top10/)
-- [Flask Best Practices](https://flask.palletsprojects.com/security/)
-- [JWT Best Practices](https://tools.ietf.org/html/rfc7519)
-- [NIST Cybersecurity Framework](https://www.nist.gov/cyberframework)
-- [CWE Top 25](https://cwe.mitre.org/top25/)
-
----
 
 ## 👨‍💼 Autor
 
